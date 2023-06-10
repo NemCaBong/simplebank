@@ -32,13 +32,13 @@ jobs:
 
     steps:
     - name: Set up Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v2
       with:
         go-version: ^1.19
       id: go
 
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
 
     - name: Install Golang migrate
       run: | # using | to run command in multiply lines
@@ -50,7 +50,7 @@ jobs:
       # which migrate check that is migrate CLI binary is successfully installed or not
 
     # create a correct db schema
-    - name: Run migration
+    - name: Run migrations
       uses: make migrateup
 
 # name: Build and get dependency have been removed because
