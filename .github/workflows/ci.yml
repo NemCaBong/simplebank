@@ -46,7 +46,6 @@ jobs:
     # create a correct db schema
     - name: Run migration
       uses: make migrateup
-
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
