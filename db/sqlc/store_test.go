@@ -113,16 +113,17 @@ func TestTransferTx(t *testing.T) {
 		// if it not the same
 		existed[transferTimes] = true
 
-		// check the updated balances
-		updatedAccount1, err := testQueries.GetAccountForUpdate(context.Background(), account1.ID)
-		require.NoError(t, err)
-
-		updatedAccount2, err := testQueries.GetAccountForUpdate(context.Background(), account2.ID)
-		require.NoError(t, err)
-
-		require.Equal(t, account1.Balance-int64(transferTimes)*amountTransfer, updatedAccount1.Balance)
-		require.Equal(t, account2.Balance+int64(transferTimes)*amountTransfer, updatedAccount2.Balance)
 	}
+	// check the updated balances
+	updatedAccount1, err := store.GetAccountForUpdate(context.Background(), account1.ID)
+	require.NoError(t, err)
+
+	updatedAccount2, err := store.GetAccountForUpdate(context.Background(), account2.ID)
+	require.NoError(t, err)
+
+	require.Equal(t, account1.Balance-int64(concurrencyStep)*amountTransfer, updatedAccount1.Balance)
+	require.Equal(t, account2.Balance+int64(concurrencyStep)*amountTransfer, updatedAccount2.Balance)
+
 }
 
 func TestTransferTxDeadlock(t *testing.T) {

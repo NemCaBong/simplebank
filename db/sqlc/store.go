@@ -63,11 +63,11 @@ type TransferTxParams struct {
 // in order to know the result of the transaction
 // kết quả của 5 bước chuyển khoản bên trên
 type TransferTxResult struct {
-	Transfer    Transfer `json:"transfer"`   // see the whole transfer
-	FromAccount Account  `json:from_account` //see the balance of from account
-	ToAccount   Account  `json:"to_account"` //see the balance of to account
-	FromEntry   Entry    `json:"from_entry"` // money moving out
-	ToEntry     Entry    `json:"to_entry"`   //money in
+	Transfer    Transfer `json:"transfer"`     // see the whole transfer
+	FromAccount Account  `json:"from_account"` //see the balance of from account
+	ToAccount   Account  `json:"to_account"`   //see the balance of to account
+	FromEntry   Entry    `json:"from_entry"`   // money moving out
+	ToEntry     Entry    `json:"to_entry"`     //money in
 }
 
 // TransferTx sẽ làm nhiệm vụ như 1 transaction khi cta chuyển tiền
