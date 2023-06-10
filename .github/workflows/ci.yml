@@ -7,45 +7,54 @@ on:
     branches: [ "main" ]
 
 jobs:
-
-  test:
+# one jobs only it's build
+  build:
     name: Test
     runs-on: ubuntu-latest
-
     services:
+      # external services to run 
       postgres:
-        image: postgres:12-alpine
+        image: postgres:12
+        # Provide the password for postgres
         env:
+          POSTGRES_PASSWORD: thobeogalaxy257
           POSTGRES_USER: root
-          POSTGRES_PASSWORD: secret
           POSTGRES_DB: simple_bank
-        ports:
-          - 5432:5432
+        # Set health checks to wait until postgres has started
+        # to know when to run the next steps in the workflow
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
-
-    - name: Set up Go 1.x
-      uses: actions/setup-go@v2
+    - name: Set up Go
+      uses: actions/setup-go@v3
       with:
-        go-version: ^1.19
-      id: go
+        go-version: 1.19
 
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
-    - name: Install golang-migrate
-      run: |
-        curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz | tar xvz
-        sudo mv migrate.linux-amd64 /usr/bin/migrate
+    - name: Install Golang migrate
+      run: | # using | to run command in multiply lines
+        curl -L https://github.com/golang-migrate/migrate/releases/download/v4.16.1/migrate.linux-amd64.tar.gz | tar xvz
+        sudo mv migrate.linux-amd64 /usr/bin/migrate 
         which migrate
+      # move the migrate binary to usr/bin and rename it to migrate
+      # run with sudo - super user to achieve that
+      # which migrate check that is migrate CLI binary is successfully installed or not
 
-    - name: Run migrations
-      run: make migrateup
+    # create a correct db schema
+    - name: Run migration
+      uses: make migrateup
+
+# name: Build and get dependency have been removed because
+# dependency will be automatically install in go mod
+# If we run the test => will Build automatically -> no needed
 
     - name: Test
       run: make test
