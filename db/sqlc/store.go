@@ -6,15 +6,27 @@ import (
 	"fmt"
 )
 
+type Store interface {
+	// use for mock db for testing api
+	// Querier is a interface to implement all the func of Queries
+	Querier
+	TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error)
+}
+
 // Store provides all functions to execute queries and transactions
 // which Queries cannot
-type Store struct {
+// the implementation of Store interface to talk to real DB
+type SQLStore struct {
 	*Queries // composition to expend a struct
 	db       *sql.DB
 }
 
-func NewStore(db *sql.DB) *Store {
-	return &Store{
+func NewStore(db *sql.DB) Store {
+	// return a Store interface
+	// return a Store interface but actually act as
+	// a way to connect to the real DB
+	// not Mock DB for testing
+	return &SQLStore{
 		db:      db,
 		Queries: New(db),
 	}
@@ -23,7 +35,7 @@ func NewStore(db *sql.DB) *Store {
 // start a db transaction, create new Queries obj with that transaction
 // call the callback func with the created Queries and commit or rollback
 // this methods cannot be exported because it starts with lower e
-func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
+func (store *SQLStore) execTx(ctx context.Context, fn func(*Queries) error) error {
 	tx, err := store.db.BeginTx(ctx, nil)
 	// default isolation lvl is Read Commited
 	// BeginTx return a transaction obj or err
@@ -38,7 +50,7 @@ func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 		if rollBackErr := tx.Rollback(); rollBackErr != nil {
 			// Calling Errorf() function with verb %v which is used
 			// for printing structs
-			return fmt.Errorf("tx error: %v, toll back err: %v", err, rollBackErr)
+			return fmt.Errorf("tx error: %v, roll back err: %v", err, rollBackErr)
 		}
 		return err
 	}
@@ -73,7 +85,7 @@ type TransferTxResult struct {
 // TransferTx sẽ làm nhiệm vụ như 1 transaction khi cta chuyển tiền
 // tạo ra record những giao dịch (transfer), tạo entry trừ và cộng tiền, update số dư (balance)
 // trong 1 transaction
-func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
+func (store *SQLStore) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
 	var result TransferTxResult
 	err := store.execTx(ctx, func(q *Queries) error {
 		// bên trong này là 1 closure
