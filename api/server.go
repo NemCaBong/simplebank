@@ -31,6 +31,7 @@ func NewServer(store db.Store) *Server {
 	router.GET("/accounts/:id", server.getAccount)
 	router.GET("/accounts", server.listAccounts)
 	router.POST("/transfers", server.createTransferTx)
+	router.POST("/users", server.createUser)
 	// the create account need to be a method of server struct
 	// because it needs to get access to the store obj
 	// to save new account in db
