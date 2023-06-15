@@ -95,7 +95,7 @@ func TestGetAccountAPI(t *testing.T) {
 			store := mockdb.NewMockStore(ctrl)
 			// build stubs
 			tc.buildStubs(store)
-			server := NewServer(store)
+			server := newTestServer(t, store)
 			// dont need to restart a new server
 			// use httptest instead Recorder features
 			// to  record the response of api request
@@ -126,5 +126,4 @@ func requireBodyMatchAccount(t *testing.T, body *bytes.Buffer, account db.Accoun
 	err = json.Unmarshal(data, &gotAccount)
 	require.NoError(t, err)
 	require.Equal(t, account, gotAccount)
-
 }
