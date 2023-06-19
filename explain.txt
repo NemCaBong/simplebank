@@ -1,0 +1,7 @@
+#22 - Implement authentication middleware and authorization rules in Golang using Gin:
+- Tất cả những gì middleware làm chỉ là xem request đó có hợp lệ hay không
+=> chỉ cần client có access token là được
+=> nó chưa bao quát được việc client thực hiện hành động đó có đủ permission hay không
+=> Thiếu authorization
+
+- authorization rule are different for each API
